@@ -8,8 +8,17 @@ interface RequestData {
 }
 
 const request: (data: RequestData) => Promise<any> = (data: RequestData) => {
-  return fetch(process.env.NEXT_PUBLIC_BACKEND_URL + data.url, {
+  return fetch("/api/" + data.url, {
     ...data
+  }).then(async (response: Response) => {
+    if (response.redirected) {
+      window.location.replace(response.url);
+      return;
+    }
+    if (response.status !== 200) {
+      return Promise.reject(await response.text());
+    }
+    return Promise.resolve(await response.json());
   });
 };
 

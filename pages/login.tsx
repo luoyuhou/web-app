@@ -2,17 +2,16 @@ import type { NextPage } from "next";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import request from "../helper/http/fetch";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login: NextPage = () => {
   useEffect(() => {
     request({
       url: "/user/login",
       method: "GET",
-    }).then((data) => {
-      console.log("data", data);
-    });
+    }).then((data) => {}).catch((err) => toast.error(err.message));
   }, []);
+
   const { register, handleSubmit } = useForm();
   const onSubmit = (e: Record<string, string>) => {
     request({
@@ -21,7 +20,8 @@ const Login: NextPage = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(e),
     }).then((data) => {
-      console.log("login", data);
+      toast.success("Login Success");
+      setTimeout(() => window.location.replace("/"), 2000);
     }).catch((err) => toast(err.message));
   };
   return (
@@ -51,6 +51,7 @@ const Login: NextPage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
